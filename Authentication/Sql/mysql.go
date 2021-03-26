@@ -38,7 +38,8 @@ type User struct {
 // 	fmt.Println("success connected to MySQL")
 // }
 
-func Users() User {
+func Users() []string {
+
 	db, err := sql.Open("mysql", "root:adminstrator@tcp(127.0.0.1:3306)/testdb")
 	if err != nil {
 		panic(err.Error())
@@ -59,14 +60,18 @@ func Users() User {
 		panic(err.Error())
 	}
 	var user User
+	var s1 = make([]string, 5)
+	i := 0
 	for results.Next() {
 		err = results.Scan(&user.Name)
 		if err != nil {
 			panic(err.Error())
 		}
 		fmt.Println(user.Name)
+		s1[i] = user.Name
+		i++
 	}
-	return user
+	return s1
 
 	// defer insert.Close()
 
