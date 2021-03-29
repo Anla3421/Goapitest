@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"server/Gorm"
 	"server/Sql"
 
 	"github.com/gin-gonic/gin"
@@ -39,6 +40,10 @@ func main() {
 
 	router.GET("/api/test", func(c *gin.Context) {
 		c.JSON(200, Sql.Users())
+	})
+
+	router.GET("/api/testgorm", func(c *gin.Context) {
+		c.JSON(200, Gorm.Users())
 	})
 
 	router.Run(listenPort)
