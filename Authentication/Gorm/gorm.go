@@ -2,6 +2,7 @@ package Gorm
 
 import (
 	"fmt"
+	"time"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -22,6 +23,24 @@ type Product struct {
 	// Deleted gorm.DeletedAt //不使用gorm的方式啟用軟刪除
 }
 
+type Action_log struct {
+	ID          uint `gorm:"primarykey"`
+	User        uint
+	Url         string
+	Action      string `sql:"enum('Read', 'Update', 'Create')"`
+	Result      string `sql:"enum('success', 'fail')"`
+	Origin_data string
+	Alter_data  string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	// Deleted gorm.DeletedAt //不使用gorm的方式啟用軟刪除
+
+}
+
+func (Action_log) TableName() string {
+	return "action_log"
+}
+
 func Users() Product {
 	db, err := gorm.Open(mysql.Open("root:adminstrator@tcp(127.0.0.1:3306)/testdb?parseTime=true"), &gorm.Config{})
 	if err != nil {
@@ -40,7 +59,6 @@ func Users() Product {
 
 	// Read
 	var product Product
-	// var aa Product
 
 	// db.First(&product, 1)                 // find product with integer primary key
 	db.First(&product, "code = ?", "D42") // find product with code D42
@@ -61,4 +79,18 @@ func Users() Product {
 
 	// return product
 	return product
+}
+
+func Actionlogapi() []*Action_log {
+	db, err := gorm.Open(mysql.Open("root:adminstrator@tcp(127.0.0.1:3306)/jared?parseTime=true"), &gorm.Config{})
+	if err != nil {
+		panic("failed to connect database")
+	}
+
+	fmt.Println("successful connected")
+	var actionlogTable []*Action_log
+	// result := db.Table("action_log").Find("action_log")
+	// result.RowsAffected
+	db.Table("action_log").Find(&actionlogTable)
+	return actionlogTable
 }
