@@ -4,57 +4,46 @@ import (
 	"fmt"
 	"net/http"
 	"server/Api"
+	"server/Gorm"
+	"server/Sql"
 
 	"github.com/gin-gonic/gin"
 )
 
-func PostMethod(c *gin.Context) {
-	fmt.Println("\n'GetMethod' called")
-	IdValue := c.Params.ByName("IdValue")
-	message := "GetMethod Called With Param: " + IdValue
-	c.JSON(http.StatusOK, message)
-	ReqPayload := make([]byte, 1024)
-	ReqPayload, err := c.GetRawData()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println("Request Payload Data: ", string(ReqPayload))
-}
-
 func main() {
 	router := gin.Default()
-	listenPort := ":8001"
+	listenPort := ":8080"
 
-	// subRouterAuthenticated := router.Group("/api/v1/PersonId", gin.BasicAuth(gin.Accounts{
-	// 	"admin": "admin",
-	// }))
-	// subRouterAuthenticated.Any("/:IdValue", PostMethod)
+	//simple Authenticated with popup window
+	subRouterAuthenticated := router.Group("/api/auth", gin.BasicAuth(gin.Accounts{
+		"admin": "admin",
+	}))
+	subRouterAuthenticated.GET("/:IdValue", Api.PostMethod)
 
-	// router.GET("/api/hello", func(c *gin.Context) {
-	// 	name := c.Param("name")
-	// 	c.JSON(200, gin.H{
-	// 		"message": "hello " + name,
-	// 	})
-	// })
+	router.GET("/api/hello", func(c *gin.Context) {
+		name := c.Param("name")
+		c.JSON(200, gin.H{
+			"message": "hello " + name,
+		})
+	})
 
-	// router.GET("/api/test", func(c *gin.Context) {
-	// 	c.JSON(200, Sql.Users())
-	// })
+	router.GET("/api/test", func(c *gin.Context) {
+		c.JSON(200, Sql.Users())
+	})
 
-	// router.GET("/api/testgorm", func(c *gin.Context) {
-	// 	c.JSON(200, Gorm.Users())
-	// })
+	router.GET("/api/testgorm", func(c *gin.Context) {
+		c.JSON(200, Gorm.Users())
+	})
 
-	// router.POST("/api/actionlog", func(c *gin.Context) {
-	// 	c.JSON(200, gin.H{
-	// 		"status": "200",
-	// 		"msg":    "success",
-	// 		"result": gin.H{
-	// 			"actionlog": Gorm.Actionlogapi(),
-	// 		},
-	// 	})
-	// })
+	router.POST("/api/actionlog", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"status": "200",
+			"msg":    "success",
+			"result": gin.H{
+				"actionlog": Gorm.Actionlogapi(),
+			},
+		})
+	})
 
 	router.POST("/api/actionlog", Api.Actionlog)
 

@@ -17,7 +17,7 @@ func Actionlog(c *gin.Context) {
 	// fmt.Println(c.Request.URL)
 	// fmt.Println(c.Request.PostForm)
 	// fmt.Println(c.Request)
-	if c.PostForm == nil {
+	if c.Request.PostForm == nil {
 		c.JSON(200, gin.H{
 			"status": "400",
 			"msg":    "bad request",
